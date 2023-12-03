@@ -4,12 +4,16 @@
   "description": "Dockerを使用したウェブ開発テンプレートです。",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack --config ./webpack.dev.js --mode development --watch",
+    "docker:up": "docker-compose up -d --build",
+    "docker:stop": "docker-compose stop",
+    "dev": "run-s docker:up && webpack --config ./webpack.dev.js --mode development -w",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "browser-sync": "^2.29.3",
+    "browser-sync-webpack-plugin": "^2.3.0",
     "copy-webpack-plugin": "^11.0.0",
     "glob": "^10.3.10",
     "html-loader": "^4.2.0",
@@ -18,7 +22,9 @@
     "imagemin": "^8.0.1",
     "imagemin-gifsicle": "^7.0.0",
     "imagemin-webp": "^8.0.0",
+    "npm-run-all": "^4.1.5",
     "svgo": "^3.0.4",
+    "sweet-scroll": "^4.0.0",
     "template-ejs-loader": "^0.9.4",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4",

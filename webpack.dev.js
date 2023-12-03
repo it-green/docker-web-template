@@ -6,6 +6,7 @@ const WebpackWatchedGlobEntries = require('webpack-watched-glob-entries-plugin')
 const { htmlWebpackPluginTemplateCustomizer } = require('template-ejs-loader');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
+const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 
 const common = require('./webpack.common');
 
@@ -96,6 +97,29 @@ const imgWebpPlugin = () => {
   ];
 };
 
+const browserSync = () => {
+  return [
+    new BrowserSyncPlugin({
+      host: 'localhost',
+      files: ['./**/*'],
+      port: 3000,
+      proxy: {
+        target: 'http://localhost:8080',
+      },
+      watchOptions: {
+        ignored: ['webpack.config.js', 'node_modules', 'package.json', 'package-lock.json', 'readme.md'],
+      },
+      open: true,
+      ghostMode: {
+        clicks: false,
+        forms: false,
+        scroll: false,
+      },
+      logLevel: 'debug',
+    }),
+  ];
+}
+
 const app = {
   mode: 'development',
   entry: {},
@@ -115,6 +139,7 @@ const app = {
   plugins: [
     ...htmlGlobPlugins(ejsEntries),
     ...imgWebpPlugin(),
+    ...browserSync(),
   ],
 }
 

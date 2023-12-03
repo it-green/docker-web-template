@@ -1,6 +1,8 @@
 version: "3.9"
 services:
-  nginx:
-    build: ./Docker/nginx/
-    ports:
-      - "8080:80"
+    nginx:
+        build: ./Docker/nginx/
+        ports:
+            - "8080:80"
+        volumes:
+            - ./www/src/dest:/usr/share/nginx/html
