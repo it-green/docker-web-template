@@ -1,0 +1,32 @@
+@use "../abstracts" as *;
+@use "../mixins" as *;
+
+html {
+  font-size: 16px;
+
+  @include mq(sm) {
+    @include font-vw(10, 375);
+  }
+
+  @include mq(md) {
+    @include font-vw(10, 1280);
+  }
+}
+
+body {
+  font-family: $font-noto-sans;
+  font-size: 1.6rem;
+  font-weight: $font-regular;
+  line-height: 1;
+  color: $color-black;
+}
+
+.container {
+  width: 100%;
+}
+
+.content {
+  width: 90%;
+  margin: 0 auto;
+  color: $color-white;
+}

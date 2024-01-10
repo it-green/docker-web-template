@@ -1,8 +1,39 @@
 version: "3.9"
 services:
     nginx:
-        build: ./Docker/nginx/
+        build: ./Docker/nginx
         ports:
             - "8080:80"
         volumes:
             - ./www/src/dest:/usr/share/nginx/html
+        depends_on:
+            - app
+    
+    app:
+        build:
+            context: ./Docker/php
+            dockerfile: Dockerfile
+        volumes:
+            - ./www/src/dest:/usr/share/nginx/html
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+        depends_on:
+            - mysql
+    
+    mysql:
+        image: mysql:8.0
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+        volumes:
+          - mysqldata:/var/lib/mysql
+          - ./Docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+        ports:
+          - 3306:3306
+volumes:
+    mysqldata:
