@@ -10,6 +10,7 @@ const { htmlWebpackPluginTemplateCustomizer } = require('template-ejs-loader')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin')
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
+const { merge } = require('webpack-merge')
 
 // 開発ファイルへのパス
 const filePath = {
@@ -19,10 +20,10 @@ const filePath = {
 }
 
 // EJSの読み込み
-const ejsEntries = WebpackWatchedGlobEntries.getEntries(
+const entries = WebpackWatchedGlobEntries.getEntries(
   [path.resolve(__dirname, `${filePath.ejs}**/*.ejs`)],
   {
-    ignore: path.relative(__dirname, `${filePath.ejs}**/_*.ejs`),
+    ignore: path.resolve(__dirname, `${filePath.ejs}**/_*.ejs`),
   }
 )()
 
@@ -30,21 +31,23 @@ const htmlGlobPlugins = (entries) => {
   return Object.keys(entries).map(
     (key) =>
       new HtmlWebpackPlugin({
-        // 出力ファイル名
+        //出力ファイル名
         filename: `${key}.html`,
-        // ejsファイルの読み込み
+        //ejsファイルの読み込み
         template: htmlWebpackPluginTemplateCustomizer({
           htmlLoaderOption: {
+            //ファイル自動読み込みと圧縮を無効化
             sources: false,
             minimize: false,
           },
           templatePath: `${filePath.ejs}${key}.ejs`,
         }),
-        // js自動出力と圧縮を無効化
+
+        //JS・CSS自動出力と圧縮を無効化
         inject: false,
         minify: {
+          removeComments: true,
           collapseWhitespace: true,
-          preserveLineBreaks: true,
         },
       })
   )
@@ -192,12 +195,19 @@ module.exports = {
     ],
   },
 
+  devServer: {
+    //ルートディレクトリの指定
+    static: path.resolve(__dirname, 'src'),
+    hot: true,
+    open: true,
+  },
+
   plugins: [
     new CleanWebpackPlugin({
       cleanOnceBeforeBuildPatterns: ['dest/**/*'],
     }),
 
-    ...htmlGlobPlugins(ejsEntries),
+    ...htmlGlobPlugins(entries),
 
     ...copyPHPFile(),
 

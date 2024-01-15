@@ -6,7 +6,7 @@
   "scripts": {
     "docker:up": "docker-compose up -d --build",
     "docker:stop": "docker-compose stop",
-    "dev": "run-s docker:up && webpack --config ./webpack.dev.js --mode development -w",
+    "dev": "run-s docker:up && webpack --config ./webpack.dev.js --mode development --watch",
     "build": "webpack --config ./webpack.prod.js --mode production",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
