@@ -1,8 +1,9 @@
 const path = require('path')
+const { glob, globSync, globStream, globStreamSync, Glob } = require('glob')
+
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const FixStyleOnlyEntriesPlugin = require('webpack-fix-style-only-entries')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const WebpackWatchedGlobEntries = require('webpack-watched-glob-entries-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { htmlWebpackPluginTemplateCustomizer } = require('template-ejs-loader')
@@ -13,9 +14,8 @@ const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
 // 開発ファイルへのパス
 const filePath = {
   ejs: './src/pages/',
-  js: './src/assets/js/entry/',
-  scss: './src/assets/scss/',
-  images: './src/assets/images/',
+  js: './src/js/entry/',
+  scss: './src/scss/',
 }
 
 // EJSの読み込み
@@ -50,16 +50,89 @@ const htmlGlobPlugins = (entries) => {
   )
 }
 
+// php の読み込み
+const copyPHPFile = () => {
+  const target = glob.sync('src/**/*.php')
+
+  return [
+    target.length !== 0
+      ? new CopyWebpackPlugin({
+          patterns: [
+            {
+              context: path.resolve(__dirname, 'src/pages/'),
+              from: path.resolve(__dirname, 'src/pages/**/*.php'),
+              to: path.resolve(__dirname, 'dest/'),
+            },
+          ],
+        })
+      : '',
+  ]
+}
+
+const optimizeImages = () => {
+  const target = glob.sync('src/assets/**/*')
+
+  return [
+    target.length !== 0
+      ? new CopyWebpackPlugin({
+          patterns: [
+            {
+              from: path.resolve(__dirname, 'src/assets/'),
+              to: path.resolve(__dirname, 'dest/assets/'),
+            },
+          ],
+        })
+      : '',
+    new ImageMinimizerPlugin({
+      test: /\.(jpe?g|png)$/i,
+      generator: [
+        {
+          type: 'asset',
+          implementation: ImageMinimizerPlugin.imageminGenerate,
+          options: {
+            plugins: [['webp', { quality: 80 }]],
+          },
+        },
+      ],
+    }),
+    // svgの最適化
+    new ImageMinimizerPlugin({
+      test: /\.svg$/i,
+      minimizer: {
+        implementation: ImageMinimizerPlugin.svgoMinify,
+        options: {
+          encodeOptions: {
+            multipass: true,
+            plugins: ['preset-default'],
+          },
+        },
+      },
+    }),
+    // gifの最適化
+    new ImageMinimizerPlugin({
+      test: /\.gif$/i,
+      minimizer: {
+        implementation: ImageMinimizerPlugin.imageminMinify,
+        options: {
+          plugins: [['gifsicle', { interlaced: true }]],
+        },
+      },
+    }),
+  ]
+}
+
 module.exports = {
   entry: WebpackWatchedGlobEntries.getEntries([
     path.resolve(__dirname, `${filePath.js}**/*.js`),
     path.resolve(__dirname, `${filePath.scss}style.scss`),
   ]),
+
   output: {
     filename: './js/[name].js',
     path: path.resolve(__dirname, 'dest'),
     clean: true,
   },
+
   module: {
     rules: [
       {
@@ -118,59 +191,31 @@ module.exports = {
       },
     ],
   },
+
   plugins: [
-    ...htmlGlobPlugins(ejsEntries),
     new CleanWebpackPlugin({
-      cleanOnceBeforeBuildPatterns: ['css/**/*', 'js/**/*'],
+      cleanOnceBeforeBuildPatterns: ['dest/**/*'],
     }),
+
+    ...htmlGlobPlugins(ejsEntries),
+
+    ...copyPHPFile(),
+
+    ...optimizeImages(),
 
     new FixStyleOnlyEntriesPlugin(),
     new MiniCssExtractPlugin({
       filename: 'css/[name].css',
     }),
 
+    // composer のパッケージをコピーする
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: path.resolve(__dirname, 'src/assets/images'),
-          to: path.resolve(__dirname, 'src/dest/assets/images'),
+          from: path.resolve(__dirname, 'vendor'),
+          to: path.resolve(__dirname, 'dest/vendor/'),
         },
       ],
-    }),
-    new ImageMinimizerPlugin({
-      test: /\.(jpe?g|png)$/i,
-      generator: [
-        {
-          type: 'asset',
-          implementation: ImageMinimizerPlugin.imageminGenerate,
-          options: {
-            plugins: [['webp', { quality: 80 }]],
-          },
-        },
-      ],
-    }),
-    // svgの最適化
-    new ImageMinimizerPlugin({
-      test: /\.svg$/i,
-      minimizer: {
-        implementation: ImageMinimizerPlugin.svgoMinify,
-        options: {
-          encodeOptions: {
-            multipass: true,
-            plugins: ['preset-default'],
-          },
-        },
-      },
-    }),
-    // gifの最適化
-    new ImageMinimizerPlugin({
-      test: /\.gif$/i,
-      minimizer: {
-        implementation: ImageMinimizerPlugin.imageminMinify,
-        options: {
-          plugins: [['gifsicle', { interlaced: true }]],
-        },
-      },
     }),
 
     new WebpackWatchedGlobEntries(),
@@ -191,7 +236,7 @@ module.exports = {
           'readme.md',
         ],
       },
-      open: true,
+      open: false,
       ghostMode: {
         clicks: false,
         forms: false,
