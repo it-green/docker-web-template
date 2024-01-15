@@ -2,8 +2,6 @@
 @use "../mixins" as *;
 
 .fv {
-  background-image: url("../../assets/images/sample-bg.webp");
-
   .content {
     display: flex;
     align-items: center;
