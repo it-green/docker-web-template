@@ -2,11 +2,20 @@
 <html lang="ja">
 
 <head>
-
+  <%- include( '../components/_head.ejs', {
+    title: 'ウェブサイトテンプレート',
+    desc: 'これは、ディスクリプションです',
+    level: './',
+    url: 'http://localhost:3000',
+    og_image: 'image_url',
+  }) %>
 </head>
 
 <body>
+  <h1>これが見出しです</h1>
+  <p>これが本文です。フォントは、1280pxの時に16pxになり1440pxの時に18pxになるように設定されています。</p>
 
+  <script src="./js/script.js"></script>
 </body>
 
 </html>

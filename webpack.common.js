@@ -10,7 +10,6 @@ const { htmlWebpackPluginTemplateCustomizer } = require('template-ejs-loader')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin')
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
-const { merge } = require('webpack-merge')
 
 // 開発ファイルへのパス
 const filePath = {
@@ -193,13 +192,6 @@ module.exports = {
         type: 'asset/inline',
       },
     ],
-  },
-
-  devServer: {
-    //ルートディレクトリの指定
-    static: path.resolve(__dirname, 'src'),
-    hot: true,
-    open: true,
   },
 
   plugins: [
