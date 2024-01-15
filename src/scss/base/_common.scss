@@ -2,14 +2,18 @@
 @use "../mixins" as *;
 
 html {
-  font-size: 16px;
+  font-size: 10px;
 
-  @include mq(sm) {
+  @include mq(over-sm) {
     @include font-vw(10, 375);
   }
 
-  @include mq(md) {
+  @include mq(over-md) {
     @include font-vw(10, 1280);
+  }
+
+  @include mq(over-xl) {
+    font-size: 11.25px;
   }
 }
 
@@ -28,5 +32,4 @@ body {
 .content {
   width: 90%;
   margin: 0 auto;
-  color: $color-white;
 }

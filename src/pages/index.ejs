@@ -12,9 +12,14 @@
 </head>
 
 <body>
-  <h1>これが見出しです</h1>
-  <p>これが本文です。フォントは、1280pxの時に16pxになり1440pxの時に18pxになるように設定されています。</p>
-
+  <%- include('../components/_header.ejs') %>
+  <section id="fv" class="container">
+    <div class="content">
+      <h1>これが見出しです</h1>
+      <p>これが本文です。フォントは、1280pxの時に16pxになり1440pxの時に18pxになるように設定されています。</p>
+    </div>
+  </section>
+  <%- include('../components/_footer.ejs') %>
   <script src="./js/script.js"></script>
 </body>
 
