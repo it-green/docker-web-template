@@ -33,3 +33,11 @@ body {
   width: 90%;
   margin: 0 auto;
 }
+
+img {
+  width: 100%;
+
+  &.vertical {
+    height: 100%;
+  }
+}

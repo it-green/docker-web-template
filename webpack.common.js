@@ -92,7 +92,7 @@ const optimizeImages = () => {
           type: 'asset',
           implementation: ImageMinimizerPlugin.imageminGenerate,
           options: {
-            plugins: [['webp', { quality: 80 }]],
+            plugins: [['webp', { quality: 90 }]],
           },
         },
       ],
