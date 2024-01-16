@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <%- include( '../layouts/_head.ejs', {
+    title: 'ウェブサイトテンプレート',
+    desc: 'これは、ディスクリプションです',
+    level: './',
+    url: 'http://localhost:3000',
+    og_image: 'image_url',
+  }) %>
+</head>
+
+<body>
+  <%- include('../layouts/_header.ejs') %>
+  <main id="top" class="top">
+    <section id="fv" class="container">
+      <div class="content">
+        <div>
+          <img src="./assets/60604937.webp" alt="握手する画像">
+        </div>
+        <h1>これが見出しです</h1>
+        <p class="pragraph">これが本文です。フォントは、1280pxの時に16pxになり1440pxの時に18pxになるように設定されています。</p>
+        <%- include('../components/_button.ejs') %>
+      </div>
+    </section>
+  </main>
+  <%- include('../layouts/_footer.ejs') %>
+  <script src="./js/script.js"></script>
+</body>
+
+</html>
