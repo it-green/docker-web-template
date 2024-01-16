@@ -1,6 +1,10 @@
+@use "../abstracts" as *;
+@use "../mixins" as *;
+
 .footer {
   height: 30vh;
   padding: 2.4rem;
   margin-top: 12rem;
+  font-family: $font-roboto;
   background-color: rgb(1 145 104);
 }

@@ -1,4 +1,8 @@
+@use "../abstracts" as *;
+@use "../mixins" as *;
+
 .header {
   padding: 2.4rem;
+  font-family: $font-roboto;
   background-color: rgb(1 145 104);
 }
