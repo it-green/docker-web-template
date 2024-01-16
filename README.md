@@ -40,9 +40,16 @@ src/ ウェブサイトのソースコード
 
 ### .envファイルについて
 
-PHPとSQLを使用するために、.envファイルを追加してください。
+PHPとSQLを使用する場合は、.envファイルを追加してください。
 
 内容は以下の通りで大丈夫です。
+
+```.env
+MYSQL_ROOT_PASSWORD=password
+MYSQL_DATABASE=php-docker-db
+MYSQL_USER=user
+MYSQL_PASSWORD=password
+```
 
 ### installation
 
@@ -50,6 +57,10 @@ PHPとSQLを使用するために、.envファイルを追加してください�
 
 ```bash
 $ npm i
+```
+
+```bash
+$ composer install
 ```
 
 ### start

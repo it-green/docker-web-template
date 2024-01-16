@@ -10,6 +10,8 @@ const { htmlWebpackPluginTemplateCustomizer } = require('template-ejs-loader')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin')
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 
 // 開発ファイルへのパス
 const filePath = {
@@ -192,6 +194,16 @@ module.exports = {
         type: 'asset/inline',
       },
     ],
+  },
+
+  optimization: {
+    minimizer: [
+      new TerserPlugin({
+        extractComments: false,
+      }),
+      new CssMinimizerPlugin(),
+    ],
+    minimize: true,
   },
 
   plugins: [
