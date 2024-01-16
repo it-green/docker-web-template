@@ -47,7 +47,9 @@
     "webpack-watched-glob-entries-plugin": "^2.2.6"
   },
   "dependencies": {
+    "@splidejs/splide": "^4.1.4",
     "css-minimizer-webpack-plugin": "^5.0.1",
-    "sass": "^1.69.7"
+    "sass": "^1.69.7",
+    "style-loader": "^3.3.4"
   }
 }
