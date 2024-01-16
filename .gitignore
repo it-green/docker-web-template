@@ -130,4 +130,6 @@ dist
 .pnp.*
 
 #this template settings
-www/src/dest
+**/dest
+
+vendor
