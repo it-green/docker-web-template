@@ -64,7 +64,7 @@ const copyPHPFile = () => {
           patterns: [
             {
               context: path.resolve(__dirname, 'src/pages/'),
-              from: path.resolve(__dirname, 'src/pages/**/*.php'),
+              from: path.resolve(__dirname, 'src/**/*.php'),
               to: path.resolve(__dirname, 'dest/'),
             },
           ],
@@ -226,7 +226,7 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: path.resolve(__dirname, 'vendor'),
+          from: path.resolve(__dirname, 'src/vendor'),
           to: path.resolve(__dirname, 'dest/vendor/'),
         },
       ],
