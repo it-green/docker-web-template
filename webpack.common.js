@@ -48,7 +48,7 @@ const htmlGlobPlugins = (entries) => {
         inject: false,
         minify: {
           removeComments: true,
-          collapseWhitespace: true,
+          collapseWhitespace: false,
         },
       })
   )
