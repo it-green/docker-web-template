@@ -10,6 +10,8 @@ const { htmlWebpackPluginTemplateCustomizer } = require('template-ejs-loader')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin')
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 
 // 開発ファイルへのパス
 const filePath = {
@@ -46,7 +48,7 @@ const htmlGlobPlugins = (entries) => {
         inject: false,
         minify: {
           removeComments: true,
-          collapseWhitespace: true,
+          collapseWhitespace: false,
         },
       })
   )
@@ -54,37 +56,45 @@ const htmlGlobPlugins = (entries) => {
 
 // php の読み込み
 const copyPHPFile = () => {
-  const target = glob.sync('src/**/*.php')
-
   return [
-    target.length !== 0
-      ? new CopyWebpackPlugin({
-          patterns: [
-            {
-              context: path.resolve(__dirname, 'src/pages/'),
-              from: path.resolve(__dirname, 'src/pages/**/*.php'),
-              to: path.resolve(__dirname, 'dest/'),
-            },
-          ],
-        })
-      : '',
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          // pages 内のファイルはここでは吐き出さない
+          filter: async (resourcePath) => {
+            if (resourcePath.indexOf('/pages/') !== -1) {
+              return false
+            }
+
+            return true
+          },
+          context: 'src',
+          from: path.resolve(__dirname, 'src/**/*.php'),
+          to: path.resolve(__dirname, 'dest'),
+          noErrorOnMissing: true,
+        },
+        {
+          context: 'src/pages',
+          from: path.resolve(__dirname, 'src/pages/**/*.php'),
+          to: path.resolve(__dirname, 'dest'),
+          noErrorOnMissing: true,
+        },
+      ],
+    }),
   ]
 }
 
 const optimizeImages = () => {
-  const target = glob.sync('src/assets/**/*')
-
   return [
-    target.length !== 0
-      ? new CopyWebpackPlugin({
-          patterns: [
-            {
-              from: path.resolve(__dirname, 'src/assets/'),
-              to: path.resolve(__dirname, 'dest/assets/'),
-            },
-          ],
-        })
-      : '',
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, 'src/assets/'),
+          to: path.resolve(__dirname, 'dest/assets/'),
+          noErrorOnMissing: true,
+        },
+      ],
+    }),
     new ImageMinimizerPlugin({
       test: /\.(jpe?g|png)$/i,
       generator: [
@@ -194,6 +204,16 @@ module.exports = {
     ],
   },
 
+  optimization: {
+    minimizer: [
+      new TerserPlugin({
+        extractComments: false,
+      }),
+      new CssMinimizerPlugin(),
+    ],
+    minimize: true,
+  },
+
   plugins: [
     new CleanWebpackPlugin({
       cleanOnceBeforeBuildPatterns: ['dest/**/*'],
@@ -208,16 +228,6 @@ module.exports = {
     new FixStyleOnlyEntriesPlugin(),
     new MiniCssExtractPlugin({
       filename: 'css/[name].css',
-    }),
-
-    // composer のパッケージをコピーする
-    new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: path.resolve(__dirname, 'vendor'),
-          to: path.resolve(__dirname, 'dest/vendor/'),
-        },
-      ],
     }),
 
     new WebpackWatchedGlobEntries(),
