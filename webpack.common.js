@@ -12,6 +12,7 @@ const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin')
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+const { root } = require('postcss')
 
 // 開発ファイルへのパス
 const filePath = {
@@ -48,7 +49,7 @@ const htmlGlobPlugins = (entries) => {
         inject: false,
         minify: {
           removeComments: true,
-          collapseWhitespace: true,
+          collapseWhitespace: false,
         },
       })
   )
@@ -102,7 +103,7 @@ const optimizeImages = () => {
           type: 'asset',
           implementation: ImageMinimizerPlugin.imageminGenerate,
           options: {
-            plugins: [['webp', { quality: 90 }]],
+            plugins: [['webp', { quality: 80 }]],
           },
         },
       ],
@@ -194,12 +195,31 @@ module.exports = {
           },
         ],
       },
-      // 画像をbase64にエンコーディング
       {
         // 対象となるファイルの拡張子
-        test: /\.(gif|webp|png|jpg|eot|wof|woff|ttf|svg)$/,
-        // 画像をBase64として取り込む
-        type: 'asset/inline',
+        test: /\.(gif|svg|eot|wof|woff|ttf)$/,
+        type: 'asset',
+        generator: {
+          filename: 'css/resources/[hash][ext][query]',
+        },
+        parser: {
+          dataUrlCondition: {
+            maxSize: 4 * 1024, // 4kb
+          },
+        },
+      },
+      {
+        // 対象となるファイルの拡張子
+        test: /\.(webp|png|jpg|jpeg)$/,
+        type: 'asset',
+        generator: {
+          filename: 'css/resources/[hash].webp[query]',
+        },
+        parser: {
+          dataUrlCondition: {
+            maxSize: 4 * 1024, // 4kb
+          },
+        },
       },
     ],
   },
