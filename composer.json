@@ -1,15 +1,18 @@
 {
-    "name": "green/docker-web-template",
-    "autoload": {
-        "psr-4": {
-            "Green\\DockerWebTemplate\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "it-green",
-            "email": "ryo.ctuad@gmail.com"
-        }
-    ],
-    "require": {}
+  "name": "green/docker-web-template",
+  "autoload": {
+    "psr-4": {
+      "Green\\DockerWebTemplate\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "it-green",
+      "email": "ryo.ctuad@gmail.com"
+    }
+  ],
+  "config": {
+    "vendor-dir": "src/vendor"
+  },
+  "require": {}
 }
