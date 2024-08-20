@@ -1,5 +1,6 @@
-@use "../abstracts" as *;
-@use "../mixins" as *;
+@use "./breakpoint" as *;
+@use "./fluid-text" as *;
+@use "./variable" as *;
 
 html {
   font-size: 10px;

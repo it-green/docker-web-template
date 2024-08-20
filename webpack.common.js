@@ -17,7 +17,7 @@ const { root } = require('postcss')
 // 開発ファイルへのパス
 const filePath = {
   ejs: './src/pages/',
-  js: './src/js/entry/',
+  js: './src/js/',
   scss: './src/scss/',
 }
 

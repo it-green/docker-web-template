@@ -1,19 +1,28 @@
 {
-  "editor.formatOnSave": true,
-  "stylelint.validate": [
-    "css",
-    "less",
-    "postcss",
-    "scss",
-    "sass",
-    "stylus",
-  ],
+  "editor.tabSize": 2,
+  "editor.formatOnSave": false,
+  "editor.defaultFormatter": "j69.ejs-beautify",
   "css.validate": false,
   "scss.validate": false,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.stylelint": "explicit"
+  "stylelint.validate": ["scss", "css"],
+  "[scss]": {
+    "editor.formatOnSave": false,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.stylelint": "explicit"
+    },
+    "editor.defaultFormatter": "sibiraj-s.vscode-scss-formatter"
+  },
+  "[javascript]": {
+    "editor.formatOnSave": false,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "cSpell.words": [
-    "stylelint"
+    "stylelint",
+    "splide",
+    "webp",
+    "autoload",
+    "Customizer",
+    "multipass",
+    "gifsicle",
   ]
 }

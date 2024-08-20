@@ -15,3 +15,6 @@ scroller.update({
   preventDefault: true,
   stopPropagation: true,
 })
+
+
+console.log("hello world");
