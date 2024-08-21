@@ -7,7 +7,8 @@
     "stylelint-config-recess-order"
   ],
   "rules": {
-    "no-descending-specificity": null
+    "no-descending-specificity": null,
+    "value-keyword-case": null
   },
   "reportNeedlessDisables": null
 }
