@@ -1,7 +1,6 @@
-@use "../abstracts" as *;
-@use "../mixins" as *;
+@use "../foundation" as *;
 
-.footer {
+.l-footer {
   height: 30vh;
   padding: 2.4rem;
   margin-top: 12rem;

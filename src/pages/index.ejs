@@ -3,26 +3,24 @@
 
 <head>
   <%- include( '../components/_head.ejs', {
-    title: 'ウェブサイトテンプレート',
-    desc: 'これは、ディスクリプションです',
-    level: './',
+    title: 'Title',
+    desc: 'Description',
+    level: '.',
+    site_name: 'site_name',
     url: 'http://localhost:3000',
     og_image: 'image_url',
+    page_css: 'top.css',
   }) %>
+  <!-- 追加したいライブラリのjsとかcssはこの下に追加する -->
 </head>
 
 <body>
   <%- include('../layouts/_header.ejs') %>
-  <main id="top" class="top">
-    <section id="fv" class="container">
-      <div class="content">
-        <div>
-          <img src="./assets/60604937.webp" alt="握手する画像">
-        </div>
-        <h1>これが見出しです</h1>
-        <p class="pragraph">これが本文です。フォントは、1280pxの時に16pxになり1440pxの時に18pxになるように設定されています。</p>
-        <%- include('../components/_button.ejs') %>
-      </div>
+  <main id="top" class="p-top">
+    <section id="fv" class="l-container p-top__fv">
+      <div class="p-top__fv__kv"></div>
+      <h1 class="l-inner">これが見出しです</h1>
+      <p class="l-inner">これが本文です。フォントは、1280pxの時に16pxになり1536pxの時に19.2pxまでサイズが大きくなるように設計しています。それ以上に拡大したい。もしくは調整したい場合は、src/scss/foundation/_base.scssを調整してください</p>
     </section>
   </main>
   <%- include('../layouts/_footer.ejs') %>
