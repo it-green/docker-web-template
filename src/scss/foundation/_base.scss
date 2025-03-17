@@ -1,6 +1,5 @@
-@use "./breakpoint" as *;
-@use "./fluid-text" as *;
 @use "./variable" as *;
+@use "../mixin" as *;
 
 html {
   font-size: 10px;
@@ -13,8 +12,8 @@ html {
     @include font-vw(10, 1280);
   }
 
-  @include mq(over-xl) {
-    font-size: 11.25px;
+  @include mq(over-2xl) {
+    font-size: 12px;
   }
 }
 
@@ -22,7 +21,7 @@ body {
   font-family: $font-noto-sans;
   font-size: 1.6rem;
   font-weight: $font-regular;
-  line-height: 1;
+  line-height: 1.6;
   color: $color-black;
   text-align: justify;
 }

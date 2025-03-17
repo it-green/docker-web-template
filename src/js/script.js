@@ -1,7 +1,7 @@
-import SweetScroll from 'sweet-scroll'
+import SweetScroll from 'sweet-scroll';
 
 // スムーススクロールの設定
-const scroller = new SweetScroll()
+const scroller = new SweetScroll();
 
 scroller.update({
   trigger: 'a[href^="#"]',
@@ -14,7 +14,6 @@ scroller.update({
   updateURL: false,
   preventDefault: true,
   stopPropagation: true,
-})
+});
 
-
-console.log("hello world");
+console.log('hello world');

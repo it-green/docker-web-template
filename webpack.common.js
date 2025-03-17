@@ -1,33 +1,55 @@
-const path = require('path')
-const { glob, globSync, globStream, globStreamSync, Glob } = require('glob')
+const path = require('path');
+const { glob, globSync, globStream, globStreamSync, Glob } = require('glob');
+const fs = require('fs');
 
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const FixStyleOnlyEntriesPlugin = require('webpack-fix-style-only-entries')
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-const WebpackWatchedGlobEntries = require('webpack-watched-glob-entries-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const { htmlWebpackPluginTemplateCustomizer } = require('template-ejs-loader')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin')
-const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
-const TerserPlugin = require('terser-webpack-plugin')
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
-const { root } = require('postcss')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const FixStyleOnlyEntriesPlugin = require('webpack-fix-style-only-entries');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const WebpackWatchedGlobEntries = require('webpack-watched-glob-entries-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { htmlWebpackPluginTemplateCustomizer } = require('template-ejs-loader');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
+const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const { root } = require('postcss');
 
 // 開発ファイルへのパス
 const filePath = {
   ejs: './src/pages/',
   js: './src/js/',
   scss: './src/scss/',
+};
+
+class CleanAfterBuildPlugin {
+  apply(compiler) {
+    compiler.hooks.afterEmit.tap('CleanAfterBuildPlugin', (compilation) => {
+      // 削除するディレクトリのパスを指定
+      const dirToDelete = path.resolve(__dirname, 'dest/js/plugin-css-loader');
+
+      // ディレクトリが存在する場合のみ削除を実行
+      if (fs.existsSync(dirToDelete)) {
+        const files = fs.readdirSync(dirToDelete);
+
+        if (files.length > 0) {
+          files.forEach((file) => {
+            fs.unlinkSync(path.resolve(dirToDelete, file));
+          });
+        }
+
+        fs.rmSync(dirToDelete, { recursive: true });
+      }
+    });
+  }
 }
 
-// EJSの読み込み
-const entries = WebpackWatchedGlobEntries.getEntries(
+const ejsEntries = WebpackWatchedGlobEntries.getEntries(
   [path.resolve(__dirname, `${filePath.ejs}**/*.ejs`)],
   {
     ignore: path.resolve(__dirname, `${filePath.ejs}**/_*.ejs`),
   }
-)()
+)();
 
 const htmlGlobPlugins = (entries) => {
   return Object.keys(entries).map(
@@ -52,8 +74,8 @@ const htmlGlobPlugins = (entries) => {
           collapseWhitespace: false,
         },
       })
-  )
-}
+  );
+};
 
 // php の読み込み
 const copyPHPFile = () => {
@@ -64,10 +86,10 @@ const copyPHPFile = () => {
           // pages 内のファイルはここでは吐き出さない
           filter: async (resourcePath) => {
             if (resourcePath.indexOf('/pages/') !== -1) {
-              return false
+              return false;
             }
 
-            return true
+            return true;
           },
           context: 'src',
           from: path.resolve(__dirname, 'src/**/*.php'),
@@ -82,8 +104,8 @@ const copyPHPFile = () => {
         },
       ],
     }),
-  ]
-}
+  ];
+};
 
 const optimizeImages = () => {
   return [
@@ -103,7 +125,7 @@ const optimizeImages = () => {
           type: 'asset',
           implementation: ImageMinimizerPlugin.imageminGenerate,
           options: {
-            plugins: [['webp', { quality: 80 }]],
+            plugins: [['webp', { quality: 80 }]], // WebP形式に変換
           },
         },
       ],
@@ -131,14 +153,46 @@ const optimizeImages = () => {
         },
       },
     }),
-  ]
-}
+    // ここにWebP変換の設定を追加
+    new ImageMinimizerPlugin({
+      test: /\.(png|jpg|jpeg)$/i,
+      minimizer: {
+        implementation: ImageMinimizerPlugin.imageminMinify,
+        options: {
+          plugins: [
+            ['imagemin-webp', { quality: 80 }], // WebP形式に変換
+          ],
+        },
+      },
+    }),
+  ];
+};
+
+// ユーティリティファイルのコピー処理
+const copyUtilityFiles = () => {
+  return [
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          // .htaccessをコピー
+          from: path.resolve(__dirname, 'src/server_files/.htaccess'),
+          to: path.resolve(__dirname, 'dest/'),
+          noErrorOnMissing: true,
+        },
+        // コピーしたいファイルがあれば以下に追記してください
+      ],
+    }),
+  ];
+};
+
+const entries = WebpackWatchedGlobEntries.getEntries([
+  path.resolve(__dirname, `${filePath.js}**/*.js`),
+  path.resolve(__dirname, 'src/scss/style.scss'),
+  path.resolve(__dirname, 'src/scss/page/**/!(_*).scss'),
+]);
 
 module.exports = {
-  entry: WebpackWatchedGlobEntries.getEntries([
-    path.resolve(__dirname, `${filePath.js}**/*.js`),
-    path.resolve(__dirname, `${filePath.scss}style.scss`),
-  ]),
+  entry: entries,
 
   output: {
     filename: './js/[name].js',
@@ -239,11 +293,15 @@ module.exports = {
       cleanOnceBeforeBuildPatterns: ['dest/**/*'],
     }),
 
-    ...htmlGlobPlugins(entries),
+    new CleanAfterBuildPlugin(),
+
+    ...htmlGlobPlugins(ejsEntries),
 
     ...copyPHPFile(),
 
     ...optimizeImages(),
+
+    ...copyUtilityFiles(),
 
     new FixStyleOnlyEntriesPlugin(),
     new MiniCssExtractPlugin({
@@ -277,4 +335,4 @@ module.exports = {
       logLevel: 'debug',
     }),
   ],
-}
+};

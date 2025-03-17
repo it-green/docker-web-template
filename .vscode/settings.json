@@ -13,7 +13,7 @@
     "editor.defaultFormatter": "sibiraj-s.vscode-scss-formatter"
   },
   "[javascript]": {
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "cSpell.words": [
